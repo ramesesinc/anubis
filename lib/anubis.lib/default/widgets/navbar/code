@@ -1,0 +1,22 @@
+<%
+    def folderid = OPTIONS.folderid ? OPTIONS.folderid : '/';	
+    def style = OPTIONS.style ? OPTIONS.style : 'horizontal';    
+    def allItems = ANUBIS.getFolder(folderid).allowedChildren;
+    def items = allItems - allItems.findAll{ it.hidden==true } 
+    items = items.findAll{  
+        if (OPTIONS.type != null && OPTIONS.type != it.type) return false; 
+
+        return true;
+    }
+
+    OPTIONS.buildMenuPath = { o ->
+        def z = o.substring(folderid.length());
+        if ( z.indexOf("/", 1) > 0 ) z = z.substring(0, z.indexOf("/",1));
+
+        return folderid + z;
+    }
+
+    def result = STYLE.render( style, items, OPTIONS );
+    if ( !result ) result = STYLE.render('horizontal', items, OPTIONS);
+%>
+${result}
